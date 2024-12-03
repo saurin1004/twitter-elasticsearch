@@ -1,0 +1,187 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweet Search</title>
+</head>
+<body>
+    <h1>Search Tweets</h1>
+    <input type="text" id="searchInput" placeholder="Enter search query">
+    <button onclick="search()">Search</button>
+    <div id="results"></div>
+
+    <script>
+    function search() {
+        const query = document.getElementById('searchInput').value;
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.forEach(hit => {
+                    const tweet = hit._source;
+                    resultsDiv.innerHTML += `<p><strong>${tweet.timestamp}</strong>: ${tweet.text}</p>`;
+                });
+            });
+    }
+    </script>
+</body>
+</html> -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweet Search</title>
+    <style>
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/Sentiment distribution">Sentiment distribution</a>
+        <a href="/Top words">Top words</a>
+    </nav>
+
+    <h1>Search Tweets</h1>
+    <input type="text" id="searchInput" placeholder="Enter search query">
+    <button onclick="search()">Search</button>
+    <div id="results"></div>
+
+    <script>
+    function search() {
+        const query = document.getElementById('searchInput').value;
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.forEach(hit => {
+                    const tweet = hit._source;
+                    resultsDiv.innerHTML += `<p><strong>${tweet.timestamp}</strong>: ${tweet.text}</p>`;
+                });
+            });
+    }
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweet Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        nav {
+            background-color: #333;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        #searchInput {
+            width: 70%;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        #results p {
+            background-color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #results p strong {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/Sentiment distribution">Sentiment distribution</a>
+        <a href="/Top words">Top words</a>
+    </nav>
+
+    <h1>Search Tweets</h1>
+    <input type="text" id="searchInput" placeholder="Enter search query">
+    <button onclick="search()">Search</button>
+    <div id="results"></div>
+
+    <script>
+    // function search() {
+    //     const query = document.getElementById('searchInput').value;
+    //     fetch(`/search?q=${encodeURIComponent(query)}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             const resultsDiv = document.getElementById('results');
+    //             resultsDiv.innerHTML = '';
+    //             data.forEach(hit => {
+    //                 const tweet = hit._source;
+    //                 resultsDiv.innerHTML += `<p><strong>Tweet id: </strong>${tweet.tweet_id}<br><strong>Timestamp: </strong>${tweet.timestamp}<br><strong>Tweet content: </strong>${tweet.text}</p>`;
+    //             });
+    //         });
+    // }
+    function search() {
+        const query = document.getElementById('searchInput').value;
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.forEach(hit => {
+                    const tweet = hit._source;
+                    resultsDiv.innerHTML += `<p><strong>Timestamp: </strong>${tweet.timestamp}<br><strong>Tweet content: </strong>${tweet.text}</p>`;
+                });
+            });
+    }
+    </script>
+</body>
+</html>
