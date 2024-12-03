@@ -100,5 +100,5 @@ Feel free to open issues and create pull requests. If you have any ideas for imp
 
 ## Acknowledgments
 
-[Elasticsearch]{https://www.elastic.co/elasticsearch} - Search and analytics engine.
-[Twitter API]{https://developer.x.com/en/docs/x-api} - Used for fetching tweets.
+[Elasticsearch](https://www.elastic.co/elasticsearch) - Search and analytics engine.
+[Twitter API](https://developer.x.com/en/docs/x-api) - Used for fetching tweets.
