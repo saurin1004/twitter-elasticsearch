@@ -1,10 +1,14 @@
+import os
+
+from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
-# Elasticsearch connection details
+# Elasticsearch connection (credentials come from .env, see .env.example)
+load_dotenv()
 es = Elasticsearch(
-    "https://localhost:9200",  # Elasticsearch endpoint
-    basic_auth=("elastic", "m-tQ7VooPxgmyjErjLwG"),  # Replace 'your_password' with the actual password
-    verify_certs=False  # Set to False to skip SSL verification (not recommended for production)
+    os.getenv("ELASTIC_HOST", "https://localhost:9200"),
+    basic_auth=(os.getenv("ELASTIC_USER", "elastic"), os.getenv("ELASTIC_PASSWORD")),
+    verify_certs=False,  # local development cluster with a self-signed certificate
 )
 
 # Define the query (Modify based on your use case)

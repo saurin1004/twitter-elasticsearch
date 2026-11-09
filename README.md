@@ -1,106 +1,73 @@
-# Twitter Elasticsearch Integration
+# Twitter × Elasticsearch: Tweet Search and Sentiment Analysis
 
-This project demonstrates how to integrate Twitter data with Elasticsearch for efficient searching, filtering, and analysis. It allows you to collect tweets, index them in Elasticsearch, and query the data with advanced search capabilities. This repository provides the code to set up the pipeline, from fetching data from the Twitter API to storing and querying it in Elasticsearch.
+An end-to-end pipeline that collects tweets from the Twitter (X) API v2, scores their sentiment, indexes them in **Elasticsearch** for full-text search and serves search results and interactive charts through a **Flask** app.
 
-## Features
+## Pipeline
 
-- Collects tweets from Twitter using the Twitter API.
-- Indexes tweets in Elasticsearch for fast search and analytics.
-- Allows querying of tweets by keywords, date ranges, hashtags, and more.
-- Simple setup and configuration to get started with Elasticsearch and Twitter API integration.
+```
+Twitter API v2 ──► fetch_tweets.py ──► tweets.csv
+                                         │
+                       add_sentiment_score.py (TextBlob polarity)
+                                         │
+                                         ▼
+                              tweets_with_sentiment.csv
+                                         │
+                index_tweets.py ──► Elasticsearch index "tweets"
+                                         │
+                                Flask app (app.py)
+                     /search?q=… · sentiment chart · top-words chart
+```
 
-## Requirements
+| Step | Script | What it does |
+| --- | --- | --- |
+| Collect | `data_collection/fetch_tweets.py` | Pulls recent tweets for a keyword via `tweepy.Client` (API v2) and saves them to `tweets.csv` |
+| Enrich | `sentiment_analysis/add_sentiment_score.py` | Adds a TextBlob sentiment polarity score (-1 to 1) to each tweet |
+| Index | `data_ingestion/index_tweets.py` | Indexes the tweets into Elasticsearch (`tweets` index) |
+| Report | `reporting/interactive_charts.py` | Builds Plotly charts: sentiment distribution and the top 10 words (stop words removed) |
+| Serve | `app.py` | Flask app with full-text search over tweet text and the chart pages |
+| Query | `sentiment_analysis/Backend-Api.py` | Example query against the index |
 
-- Python 3.x
-- Elasticsearch (Docker or local installation)
-- Twitter Developer Account (for API access)
-- `pip` (Python package installer)
+## Tech stack
 
-## Installation
+Python · Elasticsearch 8 · Kibana · Flask · Tweepy (Twitter API v2) · TextBlob · NLTK · pandas · Plotly
 
-### 1. Clone the Repository
-Clone this repository to your local machine using the following command:
+## Running locally
+
+Requirements: Python 3.10+, a local Elasticsearch 8 instance (Kibana optional) and a Twitter developer account.
 
 ```bash
 git clone https://github.com/saurin1004/twitter-elasticsearch.git
 cd twitter-elasticsearch
-```
 
-### 2. Install Dependencies
-Install the required Python libraries using pip:
-
-```bash
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+
+cp .env.example .env    # add your Twitter and Elasticsearch credentials
 ```
 
-### 3. Set Up Twitter API Access
-To fetch tweets, you'll need access to the Twitter API. Follow these steps to get your Twitter API keys:
-
-Go to the Twitter Developer Portal.
-Create an application and generate your API keys (API Key, API Secret Key, Access Token, Access Token Secret).
-Once you have your credentials, create a .env file in the root directory and add the following environment variables:
+Start Elasticsearch, for example `bin/elasticsearch` from your install directory. It listens on `https://localhost:9200`. Then run the pipeline:
 
 ```bash
-TWITTER_API_KEY=your_api_key
-TWITTER_API_SECRET_KEY=your_api_secret_key
-TWITTER_ACCESS_TOKEN=your_access_token
-TWITTER_ACCESS_TOKEN_SECRET=your_access_token_secret
+python data_collection/fetch_tweets.py               # writes tweets.csv (keyword set in the script)
+python sentiment_analysis/add_sentiment_score.py     # writes tweets_with_sentiment.csv
+python data_ingestion/index_tweets.py                # indexes into Elasticsearch
+python reporting/interactive_charts.py               # writes the chart HTML files
+cp sentiment_distribution.html top_words.html templates/
+flask --app app run                                  # http://127.0.0.1:5000
 ```
 
-### 4. Set Up Elasticsearch
-You can either install Elasticsearch locally or use Docker to run it. 
-I personally chose to install it locally. And then later went to folder and entered the following command in terminal:
+### Endpoints
 
-```bash
-bin/elasticsearch
-```
-Ensure that Elasticsearch is running on http://localhost:9200.
+| Route | Description |
+| --- | --- |
+| `GET /` | Home page |
+| `GET /search?q=<text>` | Full-text (`multi_match`) search over tweet text and returns matching documents |
+| `GET /Sentiment distribution` | Interactive sentiment histogram |
+| `GET /Top words` | Top 10 words bar chart |
 
-### 5. Set Up Kibana
-You can either install Kibana locally or use Docker to run it. 
-I personally chose to install it locally. And then later went to folder and entered the following command in terminal:
-
-```bash
-bin/kibana
-```
-
-## Usage
-
-### 1. Fetch Tweets
-To start fetching tweets from Twitter, run the fetch_tweets.py script. You can specify parameters such as search query, number of tweets, and language.
-
-```bash
-python data_collection/fetch_tweets.py --query "Python" --count 100 --language en
-```
-
-### 2. Index Tweets in Elasticsearch
-After fetching tweets, you can index them in Elasticsearch using the index_tweets.py script. Make sure Elasticsearch is running before indexing.
-
-```bash
-python data_ingestion/index_tweets.py
-```
-
-### 3. Generate report
-After indexing queries, we want to generate static webpages using plotly library.
-```bash
-python reporting/interactive_charts.py
-```
-Add these files to templates folder.
-
-### 4. Search for Tweets
-To query the indexed tweets, you can use the search_tweets.py script. Specify your search query and any filters.
-
-```bash
-flask --app app run
-```
-
-## Contributing
-
-Feel free to open issues and create pull requests. If you have any ideas for improvement or feature suggestions, please share them.
+Sample data (`tweets.csv`, `tweets_with_sentiment.csv`) is included, so you can skip the collection step and start from indexing.
 
 ## Acknowledgments
 
-[Elasticsearch](https://www.elastic.co/elasticsearch) - Search and analytics engine.
-
-
-[Twitter API](https://developer.x.com/en/docs/x-api) - Used for fetching tweets.
+- [Elasticsearch](https://www.elastic.co/elasticsearch): search and analytics engine
+- [Twitter / X API](https://developer.x.com/en/docs/x-api): tweet data

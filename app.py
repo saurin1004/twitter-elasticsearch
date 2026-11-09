@@ -1,13 +1,17 @@
 from flask import Flask, request, jsonify, render_template
+import os
+
+from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
 app = Flask(__name__)
 
-# Elasticsearch connection
+# Elasticsearch connection (credentials come from .env, see .env.example)
+load_dotenv()
 es = Elasticsearch(
-    "https://localhost:9200",
-    basic_auth=("elastic", "m-tQ7VooPxgmyjErjLwG"),  # Use your credentials
-    verify_certs=False,
+    os.getenv("ELASTIC_HOST", "https://localhost:9200"),
+    basic_auth=(os.getenv("ELASTIC_USER", "elastic"), os.getenv("ELASTIC_PASSWORD")),
+    verify_certs=False,  # local development cluster with a self-signed certificate
 )
 
 @app.route("/", methods=["GET"])
